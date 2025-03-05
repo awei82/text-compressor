@@ -10,6 +10,8 @@ description: |
 targets:
   text-compressor:
     main: src/cli.cr
+  benchmark:
+    main: src/benchmark.cr
 
 crystal: '>= 1.14.0'
 

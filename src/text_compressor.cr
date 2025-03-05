@@ -39,8 +39,6 @@ module TextCompressor
     # The text is everything except the last 2 parts of the split
     text = text_split[..-3].join("\n####\n")
 
-    puts Digest::CRC32.checksum(text).to_s(base = 16)
-
     meta_info = text_split[-2]
     encoding_type, checksum = meta_info.split
 
