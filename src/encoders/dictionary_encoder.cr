@@ -61,7 +61,7 @@ module TextCompressor
       @counter.each do |word, count|
         if count == 1 || word.size * count < threshold
           @remainder << word
-          next 
+          next
         end
 
         if (word.chars - @@restricted_chars).size < word.size
@@ -72,7 +72,7 @@ module TextCompressor
         eligible_words << word
       end
 
-      return eligible_words
+      eligible_words
     end
 
     private def encode_word(word : String, length : Int32) : String
@@ -92,7 +92,7 @@ module TextCompressor
     # instance variables
     # @encodings is used to encode the file
     # @reverse_encodings is used to decode the file
-    # @conflict_words is an additional mapping required to 
+    # @conflict_words is an additional mapping required to
     # generate @reverse_encodings from the compressed file - see #decode
     # method for more details.
     private def generate_encodings(words : Array(String))
@@ -117,7 +117,7 @@ module TextCompressor
 
       # while duplicate mappings exist, repeat the encoding process
       # with progessively longer encodings
-      duplicate_mappings = encodings.select { |k, v| v.size > 1 }
+      duplicate_mappings = encodings.select { |_, v| v.size > 1 }
       while duplicate_mappings.size > 0
         duplicate_mappings.each do |encoded_word, words|
           new_encodings = get_reduced_encodings(words)
@@ -125,9 +125,9 @@ module TextCompressor
           encodings.merge!(new_encodings)
         end
 
-        duplicate_mappings = encodings.select { |k, v| v.size > 1 }
+        duplicate_mappings = encodings.select { |_, v| v.size > 1 }
       end
-  
+
       @reverse_encodings = encodings.transform_values { |v| v[0] }
       @encodings = encodings.map { |k, v| [v[0], k] }.to_h
     end
@@ -158,8 +158,7 @@ module TextCompressor
           new_encodings[encoded_word] = [word]
         end
       end
-      return new_encodings
+      new_encodings
     end
   end
 end
-

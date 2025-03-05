@@ -9,8 +9,9 @@ module TextCompressor
   #   "sym" => TextCompressor::SymbolEncoder
   # }
   extend self
+
   def compress(
-    text : String, 
+    text : String,
     encoder_option : String = "dict",
     threshold : Int32 = 40
   ) : String
@@ -31,10 +32,10 @@ module TextCompressor
 
     encoded_text + "\n####\n#{encoder_option} #{checksum}\n####\n#{encoding_string}"
   end
-  
+
   def decompress(compressed_text : String)
     text_split = compressed_text.split("\n####\n")
-  
+
     # The text is everything except the last 2 parts of the split
     text = text_split[..-3].join("\n####\n")
 
@@ -46,13 +47,13 @@ module TextCompressor
     encoding_string = text_split[-1]
 
     if Digest::CRC32.checksum(encoding_string).to_s(base = 16) != checksum
-      raise "Encoding checksum does not match" 
+      raise "Encoding checksum does not match"
     end
 
     tokens = TextCompressor::Tokenizer.new(text).tokens
 
-    encoding_keys = encoding_string.split('\n').map { |s| s.split('#') }
-    
+    encoding_keys = encoding_string.split('\n').map(&.split('#'))
+
     encoder = begin
       ENCODER_MAP[encoding_type].new
     rescue exception
@@ -64,6 +65,6 @@ module TextCompressor
   end
 
   def format_encoding_keys(encoding_keys : Array(Array(String)))
-    encoding_keys.map {|keys| keys.join('#')}.join('\n')
+    encoding_keys.map(&.join('#')).join('\n')
   end
 end

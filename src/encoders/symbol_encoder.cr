@@ -35,7 +35,7 @@ module TextCompressor
     end
 
     def encoding_keys()
-      return [@encodings.map {|k, v| "#{k}:#{v}"}]
+      [@encodings.map {|k, v| "#{k}:#{v}"}]
     end
 
     private def count_tokens(tokens : Array(String))
@@ -55,7 +55,7 @@ module TextCompressor
       @counter.each do |word, count|
         if count == 1 || word.size * count < threshold
           @remainder << word
-          next 
+          next
         end
 
         if (word.chars - @@restricted_chars).size < word.size
@@ -66,7 +66,7 @@ module TextCompressor
         eligible_words << word
       end
 
-      return eligible_words
+      eligible_words
     end
 
     private def generate_encodings(words : Array(String))

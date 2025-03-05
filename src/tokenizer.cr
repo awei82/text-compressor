@@ -2,6 +2,7 @@ module TextCompressor
   class Tokenizer
     getter tokens : Array(String)
     getter text : String
+
     def initialize(text : String)
       @text = text
       re = /\S+|\s+/

@@ -55,7 +55,7 @@ if action == :compress
   text = File.open(filename) do |file|
     file.gets_to_end
   end
-    
+
   compressed_text = TextCompressor.compress(text, encoder_option, threshold)
 
   File.open(output_path, "w") do |file|
@@ -74,10 +74,9 @@ else
   end
 
   decompressed_text = TextCompressor.decompress(compressed_text)
-  
+
   File.open(output_path, "w") do |file|
     file.puts decompressed_text
   end
   puts "Decompressed file saved to #{output_path}"
 end
-  
