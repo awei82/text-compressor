@@ -1,0 +1,6 @@
+.vscode
+bin
+lib
+output/*
+!output/.keep
+tmp
