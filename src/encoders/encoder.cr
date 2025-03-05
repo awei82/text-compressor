@@ -1,7 +1,7 @@
 module TextCompressor
   ENCODER_MAP = {
     "dict" => DictionaryEncoder,
-    "sym" => SymbolEncoder
+    "sym"  => SymbolEncoder,
   }
 
   abstract class Encoder
@@ -9,6 +9,6 @@ module TextCompressor
 
     abstract def decode(tokens : Array(String), encoding_keys : Array(Array(String))) : Array(String)
 
-    abstract def encoding_keys()
+    abstract def encoding_keys
   end
 end

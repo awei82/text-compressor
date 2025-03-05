@@ -28,14 +28,14 @@ module TextCompressor
 
     def decode(tokens : Array(String), encoding_keys : Array(Array(String))) : Array(String)
       encodings = encoding_keys.first
-      @encodings = encodings.map {|e| e.split(':')}.to_h
+      @encodings = encodings.map(&.split(':')).to_h
       @reverse_encodings = @encodings.invert
 
       tokens.map { |token| @reverse_encodings[token]? || token }
     end
 
-    def encoding_keys()
-      [@encodings.map {|k, v| "#{k}:#{v}"}]
+    def encoding_keys
+      [@encodings.map { |k, v| "#{k}:#{v}" }]
     end
 
     private def count_tokens(tokens : Array(String))

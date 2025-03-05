@@ -44,12 +44,11 @@ end
 
 if threshold == 0
   threshold = if encoder_option == "symbol"
-    20
-  else
-    40
-  end
+                20
+              else
+                40
+              end
 end
-
 
 if action == :compress
   text = File.open(filename) do |file|

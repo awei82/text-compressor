@@ -40,8 +40,8 @@ module TextCompressor
 
     # Returns a list of mappings to be appended to the compressed file.
     # The mappings are required to decode the compressed file.
-    def encoding_keys() : Array(Array(String))
-      return [@encodings.keys(), @conflict_words.to_a]
+    def encoding_keys : Array(Array(String))
+      [@encodings.keys, @conflict_words.to_a]
     end
 
     private def count_tokens
@@ -77,13 +77,13 @@ module TextCompressor
 
     private def encode_word(word : String, length : Int32) : String
       if length >= word.size
-        return word
+        word
       elsif length < 2
         raise "Length must be greater than 1"
       elsif length == 2
         "#{word[0]}#{word.size - 1}"
       else
-        "#{word[0]}#{word.size - length + 1}#{word[-(length-2)..-1]}"
+        "#{word[0]}#{word.size - length + 1}#{word[-(length - 2)..-1]}"
       end
     end
 
@@ -136,7 +136,7 @@ module TextCompressor
     private def get_reduced_encodings(words)
       counter = 1
       ptr = words[0].size - 1
-      while words.map { |w| w[ptr] }.uniq.size == 1
+      while words.map { |w| w[ptr] }.uniq!.size == 1
         ptr -= 1
         counter += 1
       end
