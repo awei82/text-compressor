@@ -68,6 +68,7 @@ OptionParser.parse do |parser|
   end
 end
 
+# configure default threshold value if none given.
 if threshold == 0
   threshold = if encoder_option == "symbol"
                 20
@@ -84,7 +85,7 @@ if action == :compress
   compressed_text = TextCompressor.compress(text, encoder_option, threshold)
 
   File.open(output_path, "w") do |file|
-    file.puts compressed_text
+    file << compressed_text
   end
 
   puts "Original file size: #{File.size(filename)} bytes"
@@ -101,7 +102,7 @@ else
   decompressed_text = TextCompressor.decompress(compressed_text)
 
   File.open(output_path, "w") do |file|
-    file.puts decompressed_text
+    file << decompressed_text
   end
   puts "Decompressed file saved to #{output_path}"
 end

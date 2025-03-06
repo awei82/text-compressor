@@ -13,7 +13,7 @@ files = %w(
   ./samples/xargs.1
 )
 
-thresholds = [20, 30, 40, 50, 60]
+thresholds = [20, 25, 30, 35, 40, 45, 50]
 encoder_option = "dict"
 
 OptionParser.parse do |parser|
@@ -71,7 +71,7 @@ thresholds.each do |threshold|
     decompressed_text = TextCompressor.decompress(compressed_text)
 
     if text != decompressed_text
-      raise "Decompression check failed: #{text.size} : #{decompressed_text.size}%"
+      raise "Decompression check failed: #{text.size} : #{decompressed_text.size}"
     end
   end
 

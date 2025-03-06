@@ -10,6 +10,7 @@ module TextCompressor
   # }
   extend self
 
+  # Compresses the given text, and appends the encoding map to the end of the text
   def compress(
     text : String,
     encoder_option : String = "dict",
@@ -30,22 +31,21 @@ module TextCompressor
 
     checksum = Digest::CRC32.checksum(encoding_string).to_s(base = 16)
 
-    encoded_text + "\n####\n#{encoder_option} #{checksum}\n####\n#{encoding_string}"
+    encoded_text + "####\n#{encoder_option} #{checksum}\n####\n#{encoding_string}"
   end
 
   def decompress(compressed_text : String)
-    text_split = compressed_text.split("\n####\n")
+    text_split = compressed_text.split("####\n")
 
     # The text is everything except the last 2 parts of the split
-    text = text_split[..-3].join("\n####\n")
+    text = text_split[..-3].join("####\n")
 
     meta_info = text_split[-2]
     encoding_type, checksum = meta_info.split
-
     encoding_string = text_split[-1]
 
     if Digest::CRC32.checksum(encoding_string).to_s(base = 16) != checksum
-      raise "Encoding checksum does not match"
+      raise "Encoding checksum does not match: #{Digest::CRC32.checksum(encoding_string).to_s(base = 16)}"
     end
 
     tokens = TextCompressor::Tokenizer.new(text).tokens
@@ -62,6 +62,7 @@ module TextCompressor
     decoded_tokens.join
   end
 
+  # If multiple sets of mappings are required for decoding, separate them with a newline
   def format_encoding_keys(encoding_keys : Array(Array(String)))
     encoding_keys.map(&.join('#')).join('\n')
   end

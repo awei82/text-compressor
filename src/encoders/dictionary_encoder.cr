@@ -1,8 +1,14 @@
 require "./encoder"
 
 module TextCompressor
+  # The Dictionary Encoder uses a mapping algorithm to generate
+  # a unique encoding for each word selected for compression.
+  # Words are grouped by starting char and length.
+  # For examples, the word "apple" would be encoded to "a4"
+  # If another 5-letter a-word was added it would look like this:
+  # {"apple" => "a3e", "artsy" => "a3y"}, and so on.
   class DictionaryEncoder < TextCompressor::Encoder
-    KEY = "dict"
+    @@key = "dict"
 
     getter input_tokens : Array(String) = [] of String
     getter counter : Hash(String, Int32) = Hash(String, Int32).new(0)
@@ -24,15 +30,18 @@ module TextCompressor
 
       eligible_words = get_eligible_words(threshold)
 
-      # puts "Threshhold #{threshold}: #{eligible_words.size}"
-      # puts eligible_words
-
       generate_encodings(eligible_words)
       tokens.map { |token| @encodings[token]? || token }
     end
 
     def decode(tokens : Array(String), encoding_keys : Array(Array(String))) : Array(String)
       words, conflict_words = encoding_keys
+
+      # if the mapping is empty, nothing was encoded
+      if words.size == 1 && words.first == ""
+        return tokens
+      end
+  
       @remainder = Set(String).new(conflict_words)
       generate_encodings(words)
       tokens.map { |token| @reverse_encodings[token]? || token }
@@ -59,11 +68,12 @@ module TextCompressor
     private def get_eligible_words(threshold)
       eligible_words = [] of String
       @counter.each do |word, count|
-        if count == 1 || word.size * count < threshold
+        if count == 1 || word.size < 3 || word.size * count < threshold 
           @remainder << word
           next
         end
 
+        # Do not add words that have restricted chars
         if (word.chars - @@restricted_chars).size < word.size
           @remainder << word
           next
@@ -75,9 +85,10 @@ module TextCompressor
       eligible_words
     end
 
+    # length is length of the new encoding. length must be at least 2
     private def encode_word(word : String, length : Int32) : String
-      if length >= word.size
-        word
+      if length == word.size
+        return word
       elsif length < 2
         raise "Length must be greater than 1"
       elsif length == 2
@@ -87,21 +98,19 @@ module TextCompressor
       end
     end
 
-    # This method generates the
-    # @encodings, @reverse_encodings and @conflict_words
-    # instance variables
+    # This method generates the @encodings, @reverse_encodings 
+    # and @conflict_words instance variables
     # @encodings is used to encode the file
     # @reverse_encodings is used to decode the file
-    # @conflict_words is an additional mapping required to
-    # generate @reverse_encodings from the compressed file - see #decode
-    # method for more details.
+    # @conflict_words is an additional mapping required to generate @reverse_encodings 
+    # from the compressed file - see #decode method for more details.
     private def generate_encodings(words : Array(String))
       encodings = Hash(String, Array(String)).new
       words.each do |word|
         length = 2
         encoded_word = encode_word(word, length)
 
-        # check that the potential encodings is not one of the existing words
+        # check that the potential encoding is not one of the existing words
         while @remainder.includes?(encoded_word)
           @conflict_words.add(encoded_word)
           length += 1

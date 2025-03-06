@@ -1,8 +1,10 @@
 require "./encoder"
 
 module TextCompressor
+  # Assigns a unique base64 symbol to each word selected for encoding.
+  # See SymbolGenerator for symbol generation details.
   class SymbolEncoder < TextCompressor::Encoder
-    KEY = "sym"
+    @@key = "sym"
 
     getter counter : Hash(String, Int32) = Hash(String, Int32).new(0)
     getter remainder : Set(String) = Set(String).new
