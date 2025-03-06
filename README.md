@@ -13,8 +13,8 @@ bin/text-compressor --decompress -o output/alice29.txt output/alice29.txt.compre
 The compressor is intended to be used with whitespace-separated text (see the `samples` folder for examples).
 
 The utility come with two encoders:
-- DictionaryEncoder (dict): A unique encoding is generated for words in the text
-- SymbolEncoder (sym): A unique base64 symbol is used to replace words in the text
+- [DictionaryEncoder](src/encoders/dictionary_encoder.cr) (dict): A unique encoding is generated for words in the text
+- [SymbolEncoder](src/encoders/symbol_encoder.cr) (sym): A base64 symbol generated for each encoded word in the text
 
 ### How it works
 The for each encoding method, a `threshold` value is used to decide which words to encode (The algorithm is simple - it's just the # of times the word shows up * the length of the word). The threshold value can be used to tune the encoder's performance.
